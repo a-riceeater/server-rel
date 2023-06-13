@@ -1,8 +1,12 @@
 const express = require("express")
 const fs = require("fs")
 const path = require("path")
+const cors = require("cors")
 
 const app = express()
+app.use(cors({
+    origin: "*"
+}))
 
 app.get("/downloads", (req, res) => {
     const jsonData = JSON.parse(fs.readFileSync(path.join(__dirname, "downloads.json"), "utf8"));
@@ -12,9 +16,8 @@ app.get("/downloads", (req, res) => {
 app.post("/update-downloads", (req, res) => {
     const jsonData = JSON.parse(fs.readFileSync(path.join(__dirname, "downloads.json"), "utf8"));
     jsonData.downloads++;
-    fs.writeFile(path.join(__dirname, "downloads.json", ), JSON.stringify(jsonData), "utf8", (err) => {
-        res.status(200);
-    })
+    fs.writeFileSync(path.join(__dirname, "downloads.json"), JSON.stringify(jsonData))
+    res.sendStatus(200)
 })
 
 app.listen(80, () => {
