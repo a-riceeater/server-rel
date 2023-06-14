@@ -2,7 +2,6 @@ const express = require("express")
 const fs = require("fs")
 const path = require("path")
 const cors = require("cors")
-require("dotenv").config();
 
 const app = express()
 app.use(cors({
@@ -10,20 +9,21 @@ app.use(cors({
 }))
 
 app.get("/downloads", (req, res) => {
-    res.send(process.env.downloads.toString())
+    const jsonData = JSON.parse(fs.readFileSync(path.join(__dirname, "downloads.json"), "utf8"));
+    res.send(jsonData.downloads.toString())
 })
 
 app.get("/current-version", (req, res) => {
-    res.send(process.env.version.toString())
+    const jsonData = JSON.parse(fs.readFileSync(path.join(__dirname, "downloads.json"), "utf8"));
+    res.send(jsonData.version.toString())
 })
 
 app.post("/update-downloads", (req, res) => {
-    let downloads = parseInt(process.env.downloads);
-    downloads++;
-    process.env.downloads = downloads;
-
-    fs.writeFileSync(path.join(__dirname, ".env"), `version=${process.env.version}\ndownloads=${process.env.downloads}`)
-
+    const jsonData = JSON.parse(fs.readFileSync(path.join(__dirname, "downloads.json"), "utf8"));
+    jsonData.downloads++;
+    fs.writeFileSync(path.join(__dirname, "downloads.json"), JSON.stringify(jsonData), (err) => {
+        if (err) console.error(err)
+    })
     res.sendStatus(200)
 })
 
