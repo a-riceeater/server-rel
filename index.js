@@ -18,7 +18,10 @@ app.get("/current-version", (req, res) => {
 })
 
 app.post("/update-downloads", (req, res) => {
-    process.env.downloads++;
+    let downloads = parseInt(process.env.downloads);
+    downloads++;
+    process.env.downloads = downloads;
+
     res.sendStatus(200)
 })
 
