@@ -15,13 +15,15 @@ app.get("/downloads", (req, res) => {
 
 app.get("/current-version", (req, res) => {
     const jsonData = JSON.parse(fs.readFileSync(path.join(__dirname, "downloads.json"), "utf8"));
-    res.send(jsonData.version)
+    res.send(jsonData.version.toString())
 })
 
 app.post("/update-downloads", (req, res) => {
     const jsonData = JSON.parse(fs.readFileSync(path.join(__dirname, "downloads.json"), "utf8"));
     jsonData.downloads++;
-    fs.writeFileSync(path.join(__dirname, "downloads.json"), JSON.stringify(jsonData))
+    fs.writeFileSync(path.join(__dirname, "downloads.json"), JSON.stringify(jsonData), (err) => {
+        if (err) console.error(err)
+    })
     res.sendStatus(200)
 })
 
