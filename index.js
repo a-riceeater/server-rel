@@ -22,6 +22,8 @@ app.post("/update-downloads", (req, res) => {
     downloads++;
     process.env.downloads = downloads;
 
+    fs.writeFileSync(path.join(__dirname, ".env"), `version=${process.env.version}\ndownloads=${process.env.downloads}`)
+
     res.sendStatus(200)
 })
 
