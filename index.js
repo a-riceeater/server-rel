@@ -27,6 +27,26 @@ app.post("/update-downloads", (req, res) => {
     res.sendStatus(200)
 })
 
+app.get("/module-length/:module", (req, res) => {
+    res.send(fs.readFileSync(path.join(__dirname, "modules", req.params.module + ".js"), "utf8").split("\n").length.toString())
+})
+
+app.get("/modules/:module", (req, res) => {
+    console.log(`Module ${req.params.module} requested`)
+    const file = fs.readFileSync(path.join(__dirname, "modules", req.params.module + ".js"), "utf8")
+    const lines = file.split("\n")
+    
+    let i = 0;
+    async function w() {
+        res.write((i == 0 ? "" : "\n") + lines[i])
+        i++;
+
+        if (i == lines.length - 1) return res.end();
+        setTimeout(w, Math.floor(Math.random() * (150 - 85) + 85))
+    }
+    w();
+})
+
 app.listen(80, () => {
     console.log("Listening on port 80")
 })
