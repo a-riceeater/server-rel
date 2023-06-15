@@ -28,12 +28,18 @@ app.post("/update-downloads", (req, res) => {
 })
 
 app.get("/module-length/:module", (req, res) => {
-    res.send(fs.readFileSync(path.join(__dirname, "modules", req.params.module + ".js"), "utf8").split("\n").length.toString())
+    const location = path.join(__dirname, "modules", req.params.module + ".js");
+    if (!fs.existsSync(location)) return res.sendStatus(404);
+
+    res.send(fs.readFileSync(location, "utf8").split("\n").length.toString())
 })
 
 app.get("/modules/:module", (req, res) => {
     console.log(`Module ${req.params.module} requested`)
-    const file = fs.readFileSync(path.join(__dirname, "modules", req.params.module + ".js"), "utf8")
+    const location = path.join(__dirname, "modules", req.params.module + ".js");
+    if (!fs.existsSync(location)) return res.sendStatus(404);
+    
+    const file = fs.readFileSync(location, "utf8")
     const lines = file.split("\n")
     
     let i = 0;
@@ -41,8 +47,8 @@ app.get("/modules/:module", (req, res) => {
         res.write((i == 0 ? "" : "\n") + lines[i])
         i++;
 
-        if (i == lines.length - 1) return res.end();
-        setTimeout(w, Math.floor(Math.random() * (150 - 85) + 85))
+        if (i == lines.length) return res.end();
+        setTimeout(w, Math.floor(Math.random() * (100 - 85) + 85))
     }
     w();
 })
